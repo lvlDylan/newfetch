@@ -86,4 +86,6 @@ void get_ram_info(sys_config_t *config) {
             parse_meminfo(line, "FreeRam", config);
         }
     }
+
+    fclose(fp);
 }
