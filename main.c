@@ -16,6 +16,9 @@ int main(void)
 
     get_cpu_name(config);
     get_ram_info(config);
-    printf("%s - \nMemory: %s / %s\n", config->cpu_name, config->free_ram, config->total_ram);
+    get_os_name(config);
+    get_kernel_version(config);
+    printf("%s - \nMemory: %s / %s\nSystem Name: %s\nKernel: %s", config->cpu_name, config->free_ram, config->total_ram, config->os_name, config->kernel_name);
+
     free(config);
 }

@@ -13,12 +13,12 @@
 #define MAX_BUFFER_SIZE 1024
 
 void get_cpu_name(sys_config_t *config) {
-
     char line[MAX_BUFFER_SIZE];
 
     // Open File and handle error that might happen
     FILE *fp = NULL;
-    if ((fp = fopen("/proc/cpuinfo", "r")) == NULL) { // Testing if /proc/cpuinfo can be read.
+    if ((fp = fopen("/proc/cpuinfo", "r")) == NULL) {
+        // Testing if /proc/cpuinfo can be read.
         strncpy(config->cpu_name, "Unknown", STR_SIZE_MAX - 1); // If not, put unknown
         return;
     }
@@ -35,7 +35,7 @@ void get_cpu_name(sys_config_t *config) {
         if (strncmp(line, "model name", 10) == 0) {
             char *model_name = strchr(line, ':');
             if (model_name != NULL) {
-                model_name ++;
+                model_name++;
                 while (*model_name == ' ' || *model_name == '\t') {
                     model_name++;
                 }
@@ -57,15 +57,15 @@ void get_cpu_name(sys_config_t *config) {
 }
 
 static void parse_meminfo(const char *line, const char *type, sys_config_t *config) {
-    const char *start_ptr = line + 9; // Start of line without MemTotal
+    const char *start_ptr = strchr(line, ':') + 1; // Start of line without Mem***:
 
     long mem_val = strtol(start_ptr, NULL, 10); // Convert str to long
 
     mem_val = mem_val / 1024;
     if (strcmp(type, "TotalRam") == 0) {
-        snprintf(config->total_ram, MAX_BUFFER_SIZE,"%ld MiB", mem_val);
+        snprintf(config->total_ram, STR_SIZE_MAX - 1, "%ld MiB", mem_val);
     } else if (strcmp(type, "FreeRam") == 0) {
-        snprintf(config->free_ram, MAX_BUFFER_SIZE,"%ld MiB", mem_val);
+        snprintf(config->free_ram, STR_SIZE_MAX - 1, "%ld MiB", mem_val);
     }
 }
 
@@ -85,6 +85,51 @@ void get_ram_info(sys_config_t *config) {
         } else if (strncmp(line, "MemFree:", 8) == 0) {
             parse_meminfo(line, "FreeRam", config);
         }
+    }
+
+    fclose(fp);
+}
+
+void get_os_name(sys_config_t *config) {
+    FILE *fp = NULL;
+    if ((fp = fopen("/etc/os-release", "r")) == NULL) {
+        strncpy(config->os_name, "Unknown", STR_SIZE_MAX - 1);
+        return;
+    }
+
+    char line[MAX_BUFFER_SIZE];
+    while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
+        if (strncmp(line, "PRETTY_NAME", 11) == 0) {
+            char *os_name = strtok(line, "=");
+            os_name = strtok(NULL, "=\"\n");
+            strncpy(config->os_name, os_name, STR_SIZE_MAX - 1);
+            break;
+        }
+    }
+
+    fclose(fp);
+}
+
+void get_kernel_version(sys_config_t *config) {
+    FILE *fp = NULL;
+    if ((fp = fopen("/proc/version", "r")) == NULL) {
+        strncpy(config->kernel_name, "Unknown", STR_SIZE_MAX - 1);
+        return;
+    }
+
+    char line[MAX_BUFFER_SIZE];
+    while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
+        char *kernel_version = strtok(line, " ");
+        kernel_version = strtok(NULL, " ");
+        kernel_version = strtok(NULL, " ");
+
+        if (kernel_version == NULL) {
+            strncpy(config->kernel_name, "Unknown", STR_SIZE_MAX - 1);
+            return;
+        }
+
+        strncpy(config->kernel_name, kernel_version, STR_SIZE_MAX - 1);
+        break;
     }
 
     fclose(fp);
