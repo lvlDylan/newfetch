@@ -134,3 +134,43 @@ void get_kernel_version(sys_config_t *config) {
 
     fclose(fp);
 }
+
+void get_uptime(sys_config_t *config) {
+    FILE *fp = NULL;
+    if ((fp = fopen("/proc/uptime", "r")) == NULL) {
+        strncpy(config->kernel_name, "Unknown", STR_SIZE_MAX - 1);
+        return;
+    }
+
+    char line[MAX_BUFFER_SIZE];
+    while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
+        char *buffer = strtok(line, " ");
+        char tmp[128];
+
+        long uptime = strtol(buffer, NULL, 10);
+
+        long hours = (uptime / 3600) % 24;
+        long minutes = (uptime / 60) % 60;
+        long seconds = uptime % 60;
+        long days = uptime / 86400;
+
+        int pos = 0;
+
+        if (days >= 1) {
+            if (days == 1) {
+                pos += sprintf(tmp + pos, "%ldd", days);
+            } else {
+                pos += sprintf(tmp + pos, "%lddays", days);
+            }
+        }
+
+        if (hours >= 1)
+            pos += sprintf(tmp + pos, "%ldh", hours);
+        if (minutes >= 1)
+            pos += sprintf(tmp + pos, "%ldm", minutes);
+        if (seconds >= 1)
+            sprintf(tmp + pos, "%lds", seconds);
+
+        strncpy(config->uptime, tmp, STR_SIZE_MAX - 1);
+    }
+}
