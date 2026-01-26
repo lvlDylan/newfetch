@@ -16,8 +16,8 @@ L'objectif principal n'était pas de remplacer Neofetch, mais de comprendre :
 
 ## Fonctionnalités
 
-- [] (À venir) Affichage de l'OS et du Kernel
-- [] (À venir) Calcul de l'Uptime
+- [X] Affichage de l'OS et du Kernel
+- [X] Calcul de l'Uptime
 - [X] Modèle de CPU
 - [] (À venir) Utilisation du CPU
 - [X] Utilisation de la RAM
