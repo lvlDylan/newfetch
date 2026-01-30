@@ -28,6 +28,8 @@ Pour tester le projet :
 
 1. Clonez le repo :
    ```bash
-   git clone [https://github.com/lvlDylan/newfetch.git](https://github.com/lvlDylan/newfetch.git)
+   git clone https://github.com/lvlDylan/newfetch.git
    cd newfetch
+   make
    ```
+   L'exécutable linux se trouvera dans le dossier out.
