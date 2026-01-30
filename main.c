@@ -32,8 +32,11 @@ void display_fetch(sys_config_t *config) {
         " .`                                 `%"
     };
 
-    for (int i = 0; i<19; i++) {
+    for (int i = 0; i<19; i++) { // TODO Print hostname
         switch (i) {
+            case 1:
+                printf(CYAN "%-35s" COLOR_RESET BOLD "%s@%s" COLOR_RESET "\n", arch_logo[i], config->user, config->hostname);
+                break;
             case 2:
                 printf(CYAN BOLD "%-35s" COLOR_RESET BOLD "---------------" COLOR_RESET "\n", arch_logo[i]);
                 break;
@@ -61,7 +64,7 @@ void display_fetch(sys_config_t *config) {
 
 int main(void)
 {
-    sys_config_t *config = malloc(sizeof(sys_config_t));
+    sys_config_t *config = calloc(1,sizeof(sys_config_t));
     if (config == NULL) {
         return 1;
     }
@@ -71,6 +74,8 @@ int main(void)
     get_os_name(config);
     get_kernel_version(config);
     get_uptime(config);
+    get_username(config);
+    get_hostname(config);
 
     display_fetch(config);
     free(config);

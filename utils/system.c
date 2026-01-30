@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <unistd.h>
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -93,15 +93,15 @@ void get_ram_info(sys_config_t *config) {
 void get_os_name(sys_config_t *config) {
     FILE *fp = NULL;
     if ((fp = fopen("/etc/os-release", "r")) == NULL) {
-        strncpy(config->os_name, "Unknown", STR_SIZE_MAX - 1);
+        strncpy(config->os_name, "Linux (Unknown)", STR_SIZE_MAX - 1);
         return;
     }
 
     char line[MAX_BUFFER_SIZE];
     while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
         if (strncmp(line, "PRETTY_NAME", 11) == 0) {
-            char *os_name = strtok(line, "=");
-            os_name = strtok(NULL, "=\"\n");
+            strtok(line, "=");
+            char *os_name = strtok(NULL, "=\"\n");
             strncpy(config->os_name, os_name, STR_SIZE_MAX - 1);
             break;
         }
@@ -120,7 +120,7 @@ void get_kernel_version(sys_config_t *config) {
     char line[MAX_BUFFER_SIZE];
     while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
         char *kernel_version = strtok(line, " ");
-        kernel_version = strtok(NULL, " ");
+        strtok(NULL, " ");
         kernel_version = strtok(NULL, " ");
 
         if (kernel_version == NULL) {
@@ -138,7 +138,7 @@ void get_kernel_version(sys_config_t *config) {
 void get_uptime(sys_config_t *config) {
     FILE *fp = NULL;
     if ((fp = fopen("/proc/uptime", "r")) == NULL) {
-        strncpy(config->kernel_name, "Unknown", STR_SIZE_MAX - 1);
+        strncpy(config->uptime, "Unknown", STR_SIZE_MAX - 1);
         return;
     }
 
@@ -158,19 +158,61 @@ void get_uptime(sys_config_t *config) {
 
         if (days >= 1) {
             if (days == 1) {
-                pos += sprintf(tmp + pos, "%ldd", days);
+                pos += sprintf(tmp + pos, "%ldd, ", days);
             } else {
-                pos += sprintf(tmp + pos, "%lddays", days);
+                pos += sprintf(tmp + pos, "%ld days, ", days);
             }
         }
 
-        if (hours >= 1)
-            pos += sprintf(tmp + pos, "%ldh", hours);
-        if (minutes >= 1)
-            pos += sprintf(tmp + pos, "%ldm", minutes);
-        if (seconds >= 1)
-            sprintf(tmp + pos, "%lds", seconds);
+        if (hours >= 1) {
+            if (hours == 1) {
+                pos += sprintf(tmp + pos, "%ld hour, ", hours);
+            } else {
+                pos += sprintf(tmp + pos, "%ld hours, ", hours);
+            }
+        }
+
+        if (minutes >= 1) {
+            if (minutes == 1) {
+                pos += sprintf(tmp + pos, "%ld minute, ", minutes);
+            } else {
+                pos += sprintf(tmp + pos, "%ld minutes, ", minutes);
+            }
+        }
+
+        if (minutes >= 1) {
+            if (minutes == 1) {
+                sprintf(tmp + pos, "%ld seconde", seconds);
+            } else {
+                sprintf(tmp + pos, "%ld secondes", seconds);
+            }
+        }
 
         strncpy(config->uptime, tmp, STR_SIZE_MAX - 1);
     }
+}
+
+void get_hostname(sys_config_t *config) {
+    FILE *fp = NULL;
+    if ((fp = fopen("/etc/hostname", "r")) == NULL) {
+        strncpy(config->hostname, "Unknown", HOST_SIZE_MAX - 1);
+        return;
+    }
+
+    char line[MAX_BUFFER_SIZE];
+    if (fgets(line, HOST_SIZE_MAX, fp) != NULL) {
+        strncpy(config->hostname, line, HOST_SIZE_MAX - 1);
+    }
+
+    config->hostname[HOST_SIZE_MAX - 1] = '\0';
+    char *p = strchr(config->hostname, '\n');
+    if (p != NULL) {
+        *p = '\0';
+    }
+
+    fclose(fp);
+}
+
+void get_username(sys_config_t *config) {
+    strncpy(config->user, getlogin(), HOST_SIZE_MAX - 1);
 }
