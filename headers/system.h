@@ -17,6 +17,7 @@ typedef struct {
     char cpu_name[STR_SIZE_MAX];
     char kernel_name[STR_SIZE_MAX];
     char uptime[STR_SIZE_MAX];
+    char shell_name[STR_SIZE_MAX];
 } sys_config_t;
 
 void get_cpu_name(sys_config_t *config);
@@ -26,5 +27,6 @@ void get_kernel_version(sys_config_t *config);
 void get_uptime(sys_config_t *config);
 void get_hostname(sys_config_t *config);
 void get_username(sys_config_t *config);
+void get_shell_name(sys_config_t *config);
 
 #endif //NEWFETCH_SYSTEM_H

@@ -47,12 +47,15 @@ void display_fetch(sys_config_t *config) {
                 printf(CYAN "%-35s" "Kernel: " COLOR_RESET BOLD "%s" COLOR_RESET "\n", arch_logo[i], config->kernel_name);
                 break;
             case 5:
-                printf(CYAN "%-35s" "Uptime: " COLOR_RESET BOLD "%s" COLOR_RESET "\n", arch_logo[i], config->uptime);
+                printf(CYAN "%-35s" "Shell: " COLOR_RESET BOLD "%s" COLOR_RESET "\n", arch_logo[i], config->shell_name);
                 break;
             case 6:
-                printf(CYAN "%-35s" "Memory: " COLOR_RESET BOLD "%s/%s" COLOR_RESET "\n", arch_logo[i], config->free_ram, config->total_ram);
+                printf(CYAN "%-35s" "Uptime: " COLOR_RESET BOLD "%s" COLOR_RESET "\n", arch_logo[i], config->uptime);
                 break;
             case 7:
+                printf(CYAN "%-35s" "Memory: " COLOR_RESET BOLD "%s/%s" COLOR_RESET "\n", arch_logo[i], config->free_ram, config->total_ram);
+                break;
+            case 8:
                 printf(CYAN "%-35s" "CPU: " COLOR_RESET BOLD "%s" COLOR_RESET "\n", arch_logo[i], config->cpu_name);
                 break;
             default:
@@ -76,6 +79,7 @@ int main(void)
     get_uptime(config);
     get_username(config);
     get_hostname(config);
+    get_shell_name(config);
 
     display_fetch(config);
     free(config);

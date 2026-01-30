@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -119,9 +120,9 @@ void get_kernel_version(sys_config_t *config) {
 
     char line[MAX_BUFFER_SIZE];
     while (fgets(line, MAX_BUFFER_SIZE, fp) != NULL) {
-        char *kernel_version = strtok(line, " ");
+        strtok(line, " ");
         strtok(NULL, " ");
-        kernel_version = strtok(NULL, " ");
+        const char *kernel_version = strtok(NULL, " ");
 
         if (kernel_version == NULL) {
             strncpy(config->kernel_name, "Unknown", STR_SIZE_MAX - 1);
@@ -215,4 +216,29 @@ void get_hostname(sys_config_t *config) {
 
 void get_username(sys_config_t *config) {
     strncpy(config->user, getlogin(), HOST_SIZE_MAX - 1);
+}
+
+void get_shell_name(sys_config_t *config) {
+    pid_t parent = getppid();
+    char path[64];
+    snprintf(path, 64, "/proc/%d/cmdline", parent);
+
+    FILE *fp = NULL;
+    if ((fp = fopen(path, "r")) == NULL) {
+        strncpy(config->shell_name, "Unknown", STR_SIZE_MAX - 1);
+        return;
+    }
+
+    char line[STR_SIZE_MAX];
+    if (fgets(line, STR_SIZE_MAX, fp) != NULL) {
+        strncpy(config->shell_name, line, STR_SIZE_MAX - 1);
+    }
+
+    config->shell_name[HOST_SIZE_MAX - 1] = '\0';
+    char *p = strchr(config->shell_name, '\n');
+    if (p != NULL) {
+        *p = '\0';
+    }
+
+    fclose(fp);
 }
