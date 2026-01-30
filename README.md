@@ -19,9 +19,8 @@ L'objectif principal n'était pas de remplacer Neofetch, mais de comprendre :
 - [X] Affichage de l'OS et du Kernel
 - [X] Calcul de l'Uptime
 - [X] Modèle de CPU
-- [] (À venir) Utilisation du CPU
 - [X] Utilisation de la RAM
-- [] (À venir) Détection du Shell et du WM
+- [X] Détection du Shell
 
 ## Installation & Utilisation
 
@@ -29,6 +28,6 @@ Pour tester le projet :
 
 1. Clonez le repo :
    ```bash
-   git clone [hhttps://github.com/lvlDylan/newfetch.git](https://github.com/lvlDylan/newfetch.git)
+   git clone [https://github.com/lvlDylan/newfetch.git](https://github.com/lvlDylan/newfetch.git)
    cd newfetch
    ```
