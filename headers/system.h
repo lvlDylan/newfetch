@@ -24,5 +24,7 @@ void get_ram_info(sys_config_t *config);
 void get_os_name(sys_config_t *config);
 void get_kernel_version(sys_config_t *config);
 void get_uptime(sys_config_t *config);
+void get_hostname(sys_config_t *config);
+void get_username(sys_config_t *config);
 
 #endif //NEWFETCH_SYSTEM_H
